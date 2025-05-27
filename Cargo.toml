@@ -1,0 +1,11 @@
+[package]
+name = "attempt_opengl"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+glfw = "0.44.0"     #https://crates.io/crates/glfw
+gl = "0.14.0"       #https://crates.io/crates/gl
+glm = "0.2.3"       #https://crates.io/crates/glm 
