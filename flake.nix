@@ -1,14 +1,30 @@
 {
+  description = "OpenGL window with Rust";
+  # Build using `nix build`
+  # Testing using:
+
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    flake-parts.url = "github:hercules-ci/flake-parts";
-    rust-overlay.url = "github:oxalica/rust-overlay";
+    nixpkgs = {
+      type = "github";
+      owner = "nixos";
+      repo = "nixpkgs";
+    };
+    flake-parts = {
+      type = "github";
+      owner = "hercules-ci";
+      repo = "flake-parts";
+    };
+    rust-overlay = {
+      type = "github";
+      owner = "oxalica";
+      repo = "rust-overlay";
+    };
   };
 
-  outputs = inputs:
+  outputs = { self, nixpkgs, flake-parts, rust-overlay }: 
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [ "x86_64-linux" ];
-      perSystem = { config, self', pkgs, lib, system, ... }:
+      perSystem = { config, self, pkgs, lib, system, ... }:
         let
           runtimeDeps = with pkgs; [ alsa-lib speechd ];
           buildDeps = with pkgs; [ pkg-config rustPlatform.bindgenHook ];
