@@ -9,3 +9,6 @@ edition = "2021"
 glfw = "0.44.0"     #https://crates.io/crates/glfw
 gl = "0.14.0"       #https://crates.io/crates/gl
 glm = "0.2.3"       #https://crates.io/crates/glm 
+
+[features]
+attempt_opengl = []

@@ -26,7 +26,17 @@
       systems = [ "x86_64-linux" ];
       perSystem = { config, self', pkgs, lib, system, ... }:
         let
-          runtimeDeps = with pkgs; [ alsa-lib speechd xwayland ];
+          runtimeDeps = with pkgs; [ 
+            alsa-lib 
+            speechd 
+            xwayland 
+            xorg.libX11
+            xorg.libXrandr
+            xorg.libXinerama
+            xorg.libXcursor
+            xorg.libXi
+            libGL 
+          ];
           buildDeps = with pkgs; [ 
             pkg-config 
             rustPlatform.bindgenHook 
