@@ -21,14 +21,29 @@
     };
   };
 
-  outputs = { self, nixpkgs, flake-parts, rust-overlay }: 
+  outputs = inputs: 
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [ "x86_64-linux" ];
-      perSystem = { config, self, pkgs, lib, system, ... }:
+      perSystem = { config, self', pkgs, lib, system, ... }:
         let
-          runtimeDeps = with pkgs; [ alsa-lib speechd ];
-          buildDeps = with pkgs; [ pkg-config rustPlatform.bindgenHook ];
-          devDeps = with pkgs; [ gdb ];
+          runtimeDeps = with pkgs; [ alsa-lib speechd xwayland ];
+          buildDeps = with pkgs; [ 
+            pkg-config 
+            rustPlatform.bindgenHook 
+            cmake 
+            xorg.libX11
+            xwayland
+          ];
+          devDeps = with pkgs; [ 
+            gdb
+            xorg.libX11
+            xorg.libXrandr
+            xorg.libXinerama
+            xorg.libXcursor
+            xorg.libXi
+            xwayland
+            libGL
+          ];
 
           cargoToml = builtins.fromTOML (builtins.readFile ./Cargo.toml);
           msrv = cargoToml.package.rust-version;
@@ -53,6 +68,7 @@
             pkgs.mkShell {
               shellHook = ''
                 export RUST_SRC_PATH=${pkgs.rustPlatform.rustLibSrc}
+                export LD_LIBRARY_PATH="''${LD_LIBRARY_PATH}''${LD_LIBRARY_PATH:+:}${pkgs.libglvnd}/lib"
               '';
               buildInputs = runtimeDeps;
               nativeBuildInputs = buildDeps ++ devDeps ++ [ rustc ];
@@ -66,7 +82,7 @@
           packages.default = self'.packages.example;
           devShells.default = self'.devShells.nightly;
 
-          packages.example = (rustPackage "foobar");
+          packages.example = (rustPackage "attempt_opengl");
           packages.example-base = (rustPackage "");
 
           devShells.nightly = (mkDevShell (pkgs.rust-bin.selectLatestNightlyWith
